@@ -17,6 +17,7 @@
 in {
   options.services.librechat.ragApi = {
     enable = lib.mkEnableOption "ragApi";
+    workDir = lib.mkStrOption {default = "${librechatCfg.workDir}/rag";};
 
     credentials = lib.mkOption {
       type = lib.types.attrsOf lib.types.path;
@@ -92,12 +93,12 @@ in {
       };
 
       tmpfiles.settings = {
-        "11-librechat-rag"."${librechatCfg.workDir}/rag".d = {
+        "11-librechat-rag"."${cfg.workDir}".d = {
           mode = "0755";
           inherit (cfg) user group;
         };
 
-        "11-librechat-rag-uploads"."${librechatCfg.workDir}/rag/uploads".d = {
+        "11-librechat-rag-uploads"."${cfg.workDir}/uploads".d = {
           mode = "0755";
           inherit (cfg) user group;
         };
