@@ -2,6 +2,7 @@
   lib,
   fetchFromGitHub,
   makeWrapper,
+  nix-update-script,
   python3,
   stdenv,
 }:
@@ -76,6 +77,8 @@ stdenv.mkDerivation rec {
       --add-flags "$out/lib/python3.x/site-packages/rag_api/main.py" \
       --prefix PYTHONPATH : "$out/lib/python3.x/site-packages:$PYTHONPATH"
   '';
+
+  passthru.udpateScript = nix-update-script {};
 
   meta = with lib; {
     description = "RAG API implementation";
