@@ -26,7 +26,7 @@ in {
     enable = lib.mkEnableOption "the LibreChat server";
     package = lib.mkPackageOption pkgs "librechat" {};
 
-    logDir = lib.mkOption {
+    workDir = lib.mkOption {
       type = lib.types.path;
       default = "/var/lib/librechat";
       example = "/persist/librechat";
@@ -138,7 +138,7 @@ in {
     networking.firewall.allowedTCPPorts = lib.optional cfg.openFirewall cfg.port;
 
     systemd = {
-      tmpfiles.settings."10-librechat"."${cfg.logDir}".d = {
+      tmpfiles.settings."10-librechat"."${cfg.workDir}".d = {
         mode = "0755";
         inherit (cfg) user group;
       };
@@ -158,7 +158,7 @@ in {
         script =
           # sh
           ''
-            cd ${cfg.logDir}
+            cd ${cfg.workDir}
             export CONFIG_PATH=${configFile}
 
             ${exportAll cfg.env}
