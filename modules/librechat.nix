@@ -1,4 +1,4 @@
-# NOTE: this can be replaced by upstream when the upstream module PR is merged
+# NOTE: this wont be necesary when the in-progress upstream module PR is merged
 # REF: https://github.com/NixOS/nixpkgs/pull/412668
 {
   config,
@@ -9,6 +9,7 @@
   cfg = config.services.librechat;
   format = pkgs.formats.yaml {};
   configFile = format.generate "librechat.yaml" cfg.settings;
+
   # Thanks to https://github.com/nix-community/home-manager/blob/60e4624302d956fe94d3f7d96a560d14d70591b9/modules/lib/shell.nix :)
   export = n: v: ''export ${n}="${builtins.toString v}"'';
   exportAll = vars: lib.concatStringsSep "\n" (lib.mapAttrsToList export vars);
@@ -17,38 +18,48 @@
   transformCredential = n: v: "${n}_FILE:${v}";
   getLoadCredentialList = lib.mapAttrsToList transformCredential cfg.credentials;
 in {
+  imports = [
+    ./rag_api.nix
+  ];
+
   options.services.librechat = {
     enable = lib.mkEnableOption "the LibreChat server";
     package = lib.mkPackageOption pkgs "librechat" {};
-    openFirewall =
-      lib.mkEnableOption null
-      // {
-        description = "Whether to open the port in the firewall.";
-      };
+
     logDir = lib.mkOption {
       type = lib.types.path;
       default = "/var/lib/librechat";
       example = "/persist/librechat";
       description = "Absolute path for where the LibreChat server will use as its log directory.";
     };
+
+    openFirewall =
+      lib.mkEnableOption null
+      // {
+        description = "Whether to open the port in the firewall.";
+      };
+
     port = lib.mkOption {
       type = lib.types.port;
       default = 3080;
       example = 2309;
       description = "The value that will be passed to the PORT environment variable, telling LibreChat what to listen on.";
     };
+
     user = lib.mkOption {
       type = lib.types.str;
       default = "librechat";
       example = "alice";
       description = "The user to run the service as.";
     };
+
     group = lib.mkOption {
       type = lib.types.str;
       default = "librechat";
       example = "users";
       description = "The group to run the service as.";
     };
+
     credentials = lib.mkOption {
       type = lib.types.attrsOf lib.types.path;
       default = {};
@@ -57,6 +68,7 @@ in {
       };
       description = "Environment variables which are loaded from the contents of files at a file paths, mainly used for secrets. See https://www.librechat.ai/docs/configuration/dotenv for a full list.";
     };
+
     env = lib.mkOption {
       type = with lib.types;
         attrsOf (oneOf [
@@ -73,6 +85,7 @@ in {
       default = {};
       description = "Environment variables that will be set for the service. See https://www.librechat.ai/docs/configuration/dotenv for a full list.";
     };
+
     settings = lib.mkOption {
       type = lib.types.submodule {
         freeformType = format.type;
@@ -121,42 +134,51 @@ in {
         message = "`services.librechat.port` and `services.librechat.env.PORT` must be set to equal values.";
       }
     ];
-    networking.firewall.allowedTCPPorts = lib.optional cfg.openFirewall cfg.port;
-    systemd.tmpfiles.settings."10-librechat"."${cfg.logDir}".d = {
-      mode = "0755";
-      inherit (cfg) user group;
-    };
-    systemd.services.librechat = {
-      wantedBy = ["multi-user.target"];
-      after = ["tmpfiles.target"];
-      description = "Open-source app for all your AI conversations, fully customizable and compatible with any AI provider";
-      serviceConfig = {
-        Type = "simple";
-        User = cfg.user;
-        Group = cfg.group;
-        LoadCredential = getLoadCredentialList;
-      };
-      script =
-        # sh
-        ''
-          cd ${cfg.logDir}
-          export CONFIG_PATH=${configFile}
 
-          ${exportAll cfg.env}
-          ${exportAllCredentials cfg.credentials}
-          ${lib.getExe cfg.package}
-        '';
+    networking.firewall.allowedTCPPorts = lib.optional cfg.openFirewall cfg.port;
+
+    systemd = {
+      tmpfiles.settings."10-librechat"."${cfg.logDir}".d = {
+        mode = "0755";
+        inherit (cfg) user group;
+      };
+
+      services.librechat = {
+        after = ["tmpfiles.target"];
+        wantedBy = ["multi-user.target"];
+
+        description = "Open-source app for all your AI conversations, fully customizable and compatible with any AI provider";
+        serviceConfig = {
+          Type = "simple";
+          User = cfg.user;
+          Group = cfg.group;
+          LoadCredential = getLoadCredentialList;
+        };
+
+        script =
+          # sh
+          ''
+            cd ${cfg.logDir}
+            export CONFIG_PATH=${configFile}
+
+            ${exportAll cfg.env}
+            ${exportAllCredentials cfg.credentials}
+            ${lib.getExe cfg.package}
+          '';
+      };
     };
-    users.users.librechat = lib.mkIf (cfg.user == "librechat") {
-      name = "librechat";
-      isSystemUser = true;
-      group = "librechat";
-      description = "LibreChat server user";
+
+    users = {
+      users.librechat = lib.mkIf (cfg.user == "librechat") {
+        name = "librechat";
+        isSystemUser = true;
+        group = "librechat";
+        description = "LibreChat server user";
+      };
+
+      groups.librechat = lib.mkIf (cfg.user == "librechat") {};
     };
-    users.groups.librechat = lib.mkIf (cfg.user == "librechat") {};
   };
 
-  meta.maintainers = [
-    lib.maintainers.rrvsh
-  ];
+  meta.maintainers = [];
 }

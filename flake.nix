@@ -25,27 +25,7 @@
       };
     });
 
-    modules = import ./modules;
-
-    packages = eachSystem (system: let
-      pkgs = systemPkgs system;
-    in {
-      default = let
-        version = "";
-      in
-        pkgs.stdenv.mkDerivation {
-          inherit version;
-
-          name = "";
-          src = pkgs.fetchFromGitHub {
-            inherit version;
-
-            owner = "";
-            repo = "";
-            rev = "";
-            hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
-          };
-        };
-    });
+    nixosModules = import ./modules;
+    packages = eachSystem (system: let pkgs = systemPkgs system; in import ./packages pkgs);
   };
 }
