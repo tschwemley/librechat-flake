@@ -14,10 +14,11 @@
   cfg = librechatCfg.ragApi;
 
   getLoadCredentialList = lib.mapAttrsToList transformCredential cfg.credentials;
+  mkStrOption = attrs: lib.mkOption ({type = lib.types.str;} // attrs);
 in {
   options.services.librechat.ragApi = {
     enable = lib.mkEnableOption "ragApi";
-    workDir = lib.mkStrOption {default = "${librechatCfg.workDir}/rag";};
+    workDir = mkStrOption {default = "${librechatCfg.workDir}/rag";};
 
     credentials = lib.mkOption {
       type = lib.types.attrsOf lib.types.path;
