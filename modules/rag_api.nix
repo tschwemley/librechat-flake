@@ -83,7 +83,7 @@ in {
         script =
           # sh
           ''
-            cd ${cfg.logDir}/rag
+            cd ${cfg.workDir}/rag
 
             ${exportAll cfg.env}
             ${exportAllCredentials cfg.credentials}
@@ -91,9 +91,16 @@ in {
           '';
       };
 
-      tmpfiles.settings."11-librechat-rag"."${librechatCfg.logDir}/rag".d = {
-        mode = "0755";
-        inherit (cfg) user group;
+      tmpfiles.settings = {
+        "11-librechat-rag"."${librechatCfg.workDir}/rag".d = {
+          mode = "0755";
+          inherit (cfg) user group;
+        };
+
+        "11-librechat-rag-uploads"."${librechatCfg.workDir}/rag/uploads".d = {
+          mode = "0755";
+          inherit (cfg) user group;
+        };
       };
     };
   };
