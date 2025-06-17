@@ -79,8 +79,8 @@ in {
         description = "Open-source app for all your AI conversations, fully customizable and compatible with any AI provider";
         serviceConfig = {
           Type = "simple";
-          User = cfg.user;
-          Group = cfg.group;
+          User = librechatCfg.user;
+          Group = librechatCfg.group;
           LoadCredential = getLoadCredentialList;
         };
 
