@@ -55,7 +55,7 @@ in {
   config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = cfg.env ? PORT -> cfg.port == cfg.env.PORT;
+        assertion = cfg.env ? RAG_PORT -> cfg.port == cfg.env.RAG_PORT;
         message = "`services.librechat.ragApi.port` and `services.librechat.ragApi.env.PORT` must be set to equal values.";
       }
     ];
