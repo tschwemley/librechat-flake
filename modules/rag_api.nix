@@ -11,7 +11,7 @@
   transformCredential = n: v: "${n}_FILE:${v}";
 
   librechatCfg = config.services.librechat;
-  cfg = librechatCfg.rag_api;
+  cfg = librechatCfg.ragApi;
 
   getLoadCredentialList = lib.mapAttrsToList transformCredential cfg.credentials;
 in {
