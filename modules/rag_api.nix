@@ -18,6 +18,12 @@ in {
   options.services.librechat.ragApi = {
     enable = lib.mkEnableOption;
 
+    openFirewall =
+      lib.mkEnableOption null
+      // {
+        description = "Whether to open the port in the firewall for the RAG API.";
+      };
+
     credentials = lib.mkOption {
       type = lib.types.attrsOf lib.types.path;
       default = {};

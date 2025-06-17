@@ -1,5 +1,5 @@
 {
-  description = "";
+  description = "A Nix flake for deploying LibreChat and its RAG API on NixOS";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
