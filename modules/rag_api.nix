@@ -20,7 +20,8 @@
 in {
   options.services.librechat.ragApi = {
     enable = lib.mkEnableOption "ragApi";
-    workDir = mkStrOption {default = "${librechatCfg.workDir}/rag";};
+    cacheDir = mkStrOption {default = "rag-api";};
+    workDir = mkStrOption {default = "rag-api";};
 
     credentials = lib.mkOption {
       type = lib.types.attrsOf lib.types.path;
@@ -84,7 +85,7 @@ in {
           Group = librechatCfg.group;
           LoadCredential = getLoadCredentialList;
 
-          CacheDirectory = "rag-api";
+          CacheDirectory = cfg.cacheDir;
           WorkingDirectory = cfg.workDir;
         };
 
