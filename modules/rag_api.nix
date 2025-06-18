@@ -83,6 +83,7 @@ in {
           User = librechatCfg.user;
           Group = librechatCfg.group;
           LoadCredential = getLoadCredentialList;
+          WorkingDirectory = cfg.workDir;
         };
 
         script =
