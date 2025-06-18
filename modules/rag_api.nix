@@ -20,8 +20,8 @@
 in {
   options.services.librechat.ragApi = {
     enable = lib.mkEnableOption "ragApi";
-    cacheDir = mkStrOption {default = "rag-api";};
-    workDir = mkStrOption {default = "rag-api";};
+    cacheDir = mkStrOption {default = "/var/cache/rag-api";};
+    workDir = mkStrOption {default = "/var/lib/rag-api";};
 
     credentials = lib.mkOption {
       type = lib.types.attrsOf lib.types.path;
