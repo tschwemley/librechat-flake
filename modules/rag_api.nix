@@ -99,12 +99,12 @@ in {
 
       tmpfiles.settings = {
         "11-librechat-rag"."${cfg.workDir}".d = {
-          mode = "0755";
+          mode = "0765";
           inherit (librechatCfg) user group;
         };
 
         "11-librechat-rag-uploads"."${cfg.workDir}/uploads".d = {
-          mode = "0755";
+          mode = "0765";
           inherit (librechatCfg) user group;
         };
       };
