@@ -1,3 +1,3 @@
 {pkgs, ...}: {
-  rag_api = pkgs.callPackage ./rag_api.nix {};
+  rag-api = pkgs.callPackage ./rag-api.nix {};
 }

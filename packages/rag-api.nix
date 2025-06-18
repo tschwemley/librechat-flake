@@ -7,7 +7,7 @@
   stdenv,
 }:
 stdenv.mkDerivation rec {
-  pname = "rag_api";
+  pname = "rag-api";
   version = "0.5.0";
 
   src = fetchFromGitHub {
@@ -65,16 +65,16 @@ stdenv.mkDerivation rec {
   dontBuild = true;
 
   installPhase = ''
-    mkdir -p $out/lib/python3.x/site-packages/rag_api
+    mkdir -p $out/lib/python3.x/site-packages/rag-api
     mkdir -p $out/bin
 
     # Copy the Python source files
-    cp -r * $out/lib/python3.x/site-packages/rag_api/
+    cp -r * $out/lib/python3.x/site-packages/rag-api/
 
     # Create a wrapper script for the main entry point
     # (adjust based on how the application is meant to be run)
     makeWrapper ${python3}/bin/python $out/bin/rag-api \
-      --add-flags "$out/lib/python3.x/site-packages/rag_api/main.py" \
+      --add-flags "$out/lib/python3.x/site-packages/rag-api/main.py" \
       --prefix PYTHONPATH : "$out/lib/python3.x/site-packages:$PYTHONPATH"
   '';
 
@@ -82,7 +82,7 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "RAG API implementation";
-    homepage = "https://github.com/danny-avila/rag_api";
+    homepage = "https://github.com/dannyfavila/rag_api";
     license = licenses.mit;
     maintainers = with maintainers; [];
     platforms = platforms.all;

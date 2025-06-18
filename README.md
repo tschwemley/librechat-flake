@@ -2,7 +2,7 @@
 
 This repository provides a Nix flake for deploying [LibreChat](https://www.librechat.ai/) and its RAG API on NixOS.
 
-It provides NixOS modules to configure and run `librechat` and `rag_api` as systemd services.
+It provides NixOS modules to configure and run `librechat` and `rag-api` as systemd services.
 
 ## Usage
 
@@ -15,7 +15,7 @@ In your NixOS configuration's `flake.nix`, add this repository as an input:
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    
+
     # Replace with the actual URL to this flake
     librechat-flake.url = "github:your-github-username/this-repo-name";
   };
@@ -54,7 +54,7 @@ Here is an example configuration in your `configuration.nix`:
       MONGO_URI = "mongodb://localhost:27017/LibreChat";
       # Add other environment variables here
     };
-    
+
     settings = {
       # librechat.yaml settings go here
     };

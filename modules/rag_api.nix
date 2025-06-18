@@ -16,7 +16,7 @@
   getLoadCredentialList = lib.mapAttrsToList transformCredential cfg.credentials;
   mkStrOption = attrs: lib.mkOption ({type = lib.types.str;} // attrs);
 
-  package = pkgs.callPackage ../packages/rag_api.nix {};
+  package = pkgs.callPackage ../packages/rag-api.nix {};
 in {
   options.services.librechat.ragApi = {
     enable = lib.mkEnableOption "ragApi";
