@@ -87,7 +87,7 @@ in {
         script =
           # sh
           ''
-            cd ${cfg.workDir}/rag
+            cd ${cfg.workDir}
 
             ${exportAll cfg.env}
             ${exportAllCredentials cfg.credentials}
