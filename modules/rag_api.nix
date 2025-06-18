@@ -83,6 +83,8 @@ in {
           User = librechatCfg.user;
           Group = librechatCfg.group;
           LoadCredential = getLoadCredentialList;
+
+          CacheDirectory = "rag-api";
           WorkingDirectory = cfg.workDir;
         };
 
