@@ -67,6 +67,7 @@ in {
     networking.firewall.allowedTCPPorts = lib.optional librechatCfg.openFirewall cfg.port;
 
     systemd = {
+      packages = [package];
       services.librechat-rag-api = {
         enable = true;
 
