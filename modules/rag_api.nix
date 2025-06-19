@@ -92,7 +92,7 @@ in {
         script =
           # sh
           ''
-            cd ${cfg.workDir}
+            # cd ${cfg.workDir}
 
             ${exportAll cfg.env}
             ${exportAllCredentials cfg.credentials}
