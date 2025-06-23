@@ -25,10 +25,12 @@ in {
 
     credentials = lib.mkOption {
       type = lib.types.attrsOf lib.types.path;
+
       default = {};
       example = {
-        CREDS_KEY = /run/secrets/creds_key;
+        POSTGRES_PASSWORD = /run/secrets/rag_pg_password;
       };
+
       description = "Environment variables which are loaded from the contents of files at a file paths, mainly used for secrets. See https://www.librechat.ai/docs/configuration/dotenv for a full list.";
     };
 
@@ -40,12 +42,13 @@ in {
           int
           float
         ]);
-      example = {
-        ALLOW_REGISTRATION = "true";
-        HOST = "0.0.0.0";
-        CONSOLE_JSON_STRING_LENGTH = 255;
-      };
+
       default = {};
+      example = {
+        DB_HOST = "localhost";
+        VECTOR_DB_TYPE = "pgvector";
+      };
+
       description = "Environment variables that will be set for the service. See https://www.librechat.ai/docs/configuration/dotenv for a full list.";
     };
 
@@ -72,6 +75,10 @@ in {
       services.librechat-rag-api = {
         enable = true;
 
+        # Network access for model downloads
+        after = ["network-online.target"];
+        wants = ["network-online.target"];
+
         before = ["librechat.service"];
         wantedBy = [
           "multi-user.target"
@@ -85,30 +92,39 @@ in {
           Group = librechatCfg.group;
           LoadCredential = getLoadCredentialList;
 
-          CacheDirectory = cfg.cacheDir;
-          WorkingDirectory = cfg.workDir;
+          # TODO: fix these to follow cfg
+          #   && Probably stop using cache dir and add embeddings dir to StateDirectory
+          #   && Clean up tmpfiles defs at the same time
+          CacheDirectory = "/var/cache/rag-api";
+          StateDirectory = "/var/lib/rag-api";
+          WorkingDirectory = "/var/cache/rag-api";
         };
 
         script =
           # sh
           ''
-            # cd ${cfg.workDir}
-
             ${exportAll cfg.env}
             ${exportAllCredentials cfg.credentials}
             ${lib.getExe package}
           '';
       };
 
-      tmpfiles.settings = {
-        "11-librechat-rag"."${cfg.workDir}".d = {
-          mode = "0765";
-          inherit (librechatCfg) user group;
+      # TODO: see the above todo
+      tmpfiles.settings = let
+        group = "librechat";
+        user = "librechat";
+        mode = "0775";
+      in {
+        "11-librechat-rag"."/var/lib/rag-api".d = {
+          inherit group user mode;
+        };
+
+        "11-librechat-rag-cache"."/var/cache/rag-api".d = {
+          inherit group user mode;
         };
 
         "11-librechat-rag-uploads"."${cfg.workDir}/uploads".d = {
-          mode = "0765";
-          inherit (librechatCfg) user group;
+          inherit group user mode;
         };
       };
     };
