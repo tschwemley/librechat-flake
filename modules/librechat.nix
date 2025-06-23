@@ -144,7 +144,11 @@ in {
       };
 
       services.librechat = {
-        after = ["tmpfiles.target"];
+        after = [
+          "librechat-rag-api.service"
+          "tmpfiles.target"
+        ];
+        wants = ["librechat-rag-api.service"];
         wantedBy = ["multi-user.target"];
 
         description = "Open-source app for all your AI conversations, fully customizable and compatible with any AI provider";

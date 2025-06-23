@@ -85,7 +85,7 @@ in {
           "librechat.service"
         ];
 
-        description = "Open-source app for all your AI conversations, fully customizable and compatible with any AI provider";
+        description = "RAG API implementation. Primarily intended to be used in conjunction with https://librechat.ai";
         serviceConfig = {
           Type = "simple";
           User = librechatCfg.user;
